@@ -204,7 +204,7 @@ user/ec_com.c \
 user/ec_debug.c
 
 ec_slave_CFLAGS = -Wall -Werror -O0 -Iinclude/ -Iuser/ -Istack/ \
-	$(am__append_1)
+	-pthread $(am__append_1)
 ec_slave_LDADD = -lrt -lpcap
 all: all-am
 
