@@ -1,20 +1,9 @@
 #ifndef __ECS_SLAVE_H__
 #define __ECS_SLAVE_H__
 
-
+#include "ec_device.h"
 struct __e_slave__;
 struct fsm_slave;
-
-typedef struct __ec_interface__ {
-	int index;
-	struct ether_header mac;
-	char name[16];
-	char ip[32];
-	char macaddr[32];
-	int sock;
-	int subnet_mask;
-	int link_up;
-} ec_interface;
 
 typedef struct {
 	void (*state)(struct __e_slave__ *,uint8_t *,int);
@@ -35,12 +24,14 @@ typedef struct __e_slave__ {
 	int pkt_size;
 	int trigger_latch;
 	int interfaces_nr;
-	ec_interface* intr[EC_MAX_PORTS];
+	ec_device* intr[EC_MAX_PORTS];
 	int pdoe_sizes[TOT_PDOS]; /* description array of pdos sizes */
 	struct fsm_slave *fsm;	/* finite state machine */
 	fsm_coe  coe;
 	fsm_mbox mbox;
 } e_slave;
+
+typedef e_slave ecat_node_t;/* used by files taken from etherlab */
 
 int  ecs_net_init(int ,char *argv[], e_slave *);
 int  ecs_init(e_slave *);

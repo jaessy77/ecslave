@@ -3,18 +3,18 @@
 #include "ecs_slave.h"
 #include "ec_net.h"
 
-int ec_is_nic_link_up(e_slave *esv, int eth)
+int ec_is_nic_link_up(e_slave *esv, ec_device *intr)
 {
 	int linkup = 0;
 	char intname[256];
 	char buf[16];
 	int fd;
 	
-	if (!esv->intr[eth]){
+	if (!intr){
 		return 0;
 	}
 
-	sprintf(intname, "/sys/class/net/%s/operstate", esv->intr[eth]->name);
+	sprintf(intname, "/sys/class/net/%s/operstate", intr->name);
 	fd = open(intname, O_RDONLY);
 	if (fd < 0)
 		return 0;
@@ -28,7 +28,7 @@ LINKUP_EXIT:
 	return linkup;
 }
 
-int ecs_get_intr_conf(ec_interface * intr)
+int ecs_get_intr_conf(ec_device * intr)
 {
 	struct ifreq ifr;
 	int ret;
@@ -99,7 +99,7 @@ int ecs_get_intr_conf(ec_interface * intr)
 	return 0;
 }
 
-int ecs_sock(ec_interface * intr)
+int ecs_sock(ec_device * intr)
 {
 	struct ifreq ifr;
 
@@ -122,20 +122,21 @@ int ecs_net_init(int argc, char *argv[], e_slave * esv)
 {
 	int i;
 	int k;
+	ec_device *intr;
 
 	esv->interfaces_nr = 0;
 	for (i = 0, k = 1; k < argc; k++, i++) {
-		esv->intr[i] = malloc(sizeof(ec_interface));
-		strncpy(esv->intr[i]->name,
-			argv[k], sizeof(esv->intr[i]->name));
-		if (ecs_sock(esv->intr[i]))
+		intr = esv->intr[i] = malloc(sizeof(ec_device));
+		strncpy(intr->name,
+			argv[k], sizeof(intr->name));
+		if (ecs_sock(intr))
 			return -1;
-		if (ecs_get_intr_conf(esv->intr[i]))
+		if (ecs_get_intr_conf(intr))
 			return -1;
-		printf("LINK %d %s  %s\n", i, esv->intr[i]->name,
-			  ec_is_nic_link_up(esv, i) ? "UP" : "DOWN");
-		if (!ec_is_nic_link_up(esv, i)) {
-			free(esv->intr[i]);
+		printf("LINK %d %s  %s\n", i, intr->name,
+			  ec_is_nic_link_up(esv, intr) ? "UP" : "DOWN");
+		if (!ec_is_nic_link_up(esv, esv->intr[i])) {
+			free(intr);
 			esv->intr[i] = 0;
 			break;
 		}

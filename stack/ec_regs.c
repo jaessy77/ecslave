@@ -38,11 +38,11 @@ void ec_init_regs(e_slave* esv)
 	*/
 	dl = (uint16_t *)&ec_registers[ECT_REG_DLSTAT];
 	for (i = 0 ; i < esv->interfaces_nr ; i++){
-		if (ec_is_nic_link_up(esv, i))
+		if (ec_is_nic_link_up(esv, esv->intr[i]))
 			*dl |= (1 << (4 + i));
-		if (ec_is_nic_loop_closed(esv, i))
+		if (ec_is_nic_loop_closed(esv))
 			*dl |=	(1 << (8 + i * 2));
-		if (ec_is_nic_signal_detected(esv, i))
+		if (ec_is_nic_signal_detected(esv, esv->intr[i]))
 			*dl |= (1 << (9 + i * 2));
 	}
 }

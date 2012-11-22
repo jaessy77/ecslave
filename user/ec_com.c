@@ -24,7 +24,7 @@ uint16_t ec_dbg_wkc(e_slave *ecs)
 	return __ec_wkc(p);
 }
 
-void tx_packet(uint8_t* buf, int size, ec_interface *intr)
+void tx_packet(uint8_t* buf, int size, ec_device *intr)
 {
 	int i;
 	int bytes;
