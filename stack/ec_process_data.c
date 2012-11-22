@@ -18,9 +18,7 @@ int init_process_data(e_slave *ecs)
 	if (pd.size <= 0 ){
 		return -1;
 	}	
-#ifndef __KERNEL__
-	pd.data = malloc(pd.size);
-#endif
+	pd.data = xmalloc(pd.size);
 	memset(pd.data, 'x', pd.size);
 	ec_printf("Process data size = %d\n",pd.size);
 	return 0;

@@ -7,27 +7,23 @@ struct fsm_slave;
 
 typedef struct __ec_interface__ {
 	int index;
-#ifndef __KERNEL__
-	struct sockaddr_in m_addr;
-	struct ifreq ifr;
 	struct ether_header mac;
-#endif
 	char name[16];
 	char ip[32];
 	char macaddr[32];
 	int sock;
 	int subnet_mask;
 	int link_up;
-}ec_interface;
+} ec_interface;
 
 typedef struct {
 	void (*state)(struct __e_slave__ *,uint8_t *,int);
-}fsm_mbox;
+} fsm_mbox;
 
 typedef struct {
 	uint16_t obj_index;
 	uint8_t obj_subindex;
-}fsm_coe; 
+} fsm_coe; 
 
 #define TOT_PDOS	4 /* change when change pdo entries number */
 

@@ -1,4 +1,3 @@
-
 typedef unsigned char       uint8_t;
 typedef signed char         int8_t;
 typedef unsigned short      uint16_t;
@@ -24,6 +23,12 @@ struct ether_header
   u_int16_t ether_type;		        /* packet type ID field	*/
 } __attribute__ ((__packed__));
 
+#define xmalloc(size) 	kmalloc(size, GFP_KERNEL)
+static inline int clock_gettime(int dummy __attribute__((unused)), struct timespec *sp)
+{
+	getnstimeofday(sp);
+	return 0;
+}
 
 #else
 
@@ -57,6 +62,8 @@ struct ether_header
 #include <net/ethernet.h>
 #include <arpa/inet.h>
 
+#define xmalloc(size)	malloc(size)
+#define NSEC_PER_SEC (1000000000L)
 
 #endif
 

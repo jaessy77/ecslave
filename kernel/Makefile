@@ -1,5 +1,7 @@
 TARGET= ecslave
-OBJS  = \
+OBJS  = ec_slave.o \
+ec_net.o \
+ec_debug.o \
 ../stack/ec_cmd_apwr.o \
 ../stack/ec_cmd_aprd.o \
 ../stack/ec_cmd_aprw.o \
@@ -17,6 +19,7 @@ OBJS  = \
 ../stack/ec_sii.o \
 ../stack/ec_regs.o \
 ../stack/ec_coe.o \
+../stack/ec_cmd.o \
 ../stack/ec_mbox.o \
 ../stack/ec_process_data.o
 

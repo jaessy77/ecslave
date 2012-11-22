@@ -1,8 +1,7 @@
 #include "xgeneral.h"
 #include "ethercattype.h"
-#include "ec_net.h"
 #include "ecs_slave.h"
-
+#include "ec_net.h"
 
 int ec_is_nic_link_up(e_slave *esv, int eth)
 {
@@ -29,19 +28,9 @@ LINKUP_EXIT:
 	return linkup;
 }
 
-/* is this last slave */
-int ec_is_nic_loop_closed(e_slave * esv, int eth)
-{
-	return esv->intr[TX_INT_INDEX] == esv->intr[RX_INT_INDEX];
-}
-
-int ec_is_nic_signal_detected(e_slave * esv, int eth)
-{
-	return ec_is_nic_link_up(esv, eth);
-}
-
 int ecs_get_intr_conf(ec_interface * intr)
 {
+	struct ifreq ifr;
 	int ret;
 	char temp_str[20];
 	struct sockaddr_in sin_ip;
@@ -49,29 +38,29 @@ int ecs_get_intr_conf(ec_interface * intr)
 	struct sockaddr *sa;
 
 	/* Get host's ip */
-	strcpy(intr->ifr.ifr_name, intr->name);
-	ret = ioctl(intr->sock, SIOCGIFADDR, &intr->ifr);
+	strcpy(ifr.ifr_name, intr->name);
+	ret = ioctl(intr->sock, SIOCGIFADDR, &ifr);
 	if (ret < 0) {
 		/* no IP. put all zeros */
 		memset(&sin_ip, 0, sizeof(struct sockaddr));
 	} else {
-		memcpy(&sin_ip, &intr->ifr.ifr_addr, sizeof(struct sockaddr));
+		memcpy(&sin_ip, &ifr.ifr_addr, sizeof(struct sockaddr));
 	}
 
 	inet_ntop(AF_INET, &sin_ip.sin_addr, intr->ip, sizeof(intr->ip));
 
-	ec_printf("%s:\nLOCAL IP %s\n", intr->ifr.ifr_name, intr->ip);
+	ec_printf("%s:\nLOCAL IP %s\n", ifr.ifr_name, intr->ip);
 	/*
 	 * get host's subnet mask
 	 */
-	strcpy(intr->ifr.ifr_name, intr->name);
-	ret = ioctl(intr->sock, SIOCGIFNETMASK, &intr->ifr);
+	strcpy(ifr.ifr_name, intr->name);
+	ret = ioctl(intr->sock, SIOCGIFNETMASK, &ifr);
 	if (ret < 0) {
 		/* no mask. put all zeros */
 		memset(&sin_mask, 0, sizeof(struct sockaddr));
 		ec_printf("LOCAL SUBNET MASK 0.0.0.0\n");
 	} else {
-		memcpy(&sin_mask, &intr->ifr.ifr_netmask,
+		memcpy(&sin_mask, &ifr.ifr_netmask,
 		       sizeof(struct sockaddr));
 		ec_printf("LOCAL SUBNET MASK %s\n",
 			  inet_ntop(AF_INET, &sin_mask.sin_addr, temp_str,
@@ -79,13 +68,13 @@ int ecs_get_intr_conf(ec_interface * intr)
 	}
 	intr->subnet_mask = sin_mask.sin_addr.s_addr;
 	/* get mac address */
-	strcpy(intr->ifr.ifr_name, intr->name);
-	ret = ioctl(intr->sock, SIOCGIFHWADDR, &intr->ifr);
+	strcpy(ifr.ifr_name, intr->name);
+	ret = ioctl(intr->sock, SIOCGIFHWADDR, &ifr);
 	if (ret < 0) {
 		perror("failed to get interface address\n");
 		return -1;
 	}
-	sa = &intr->ifr.ifr_hwaddr;
+	sa = &ifr.ifr_hwaddr;
 	if (sa->sa_family != ARPHRD_ETHER) {
 		perror("interface without ARPHRD_ETHER");
 		return -1;
@@ -102,32 +91,18 @@ int ecs_get_intr_conf(ec_interface * intr)
 		  intr->mac.ether_shost[2],
 		  intr->mac.ether_shost[3],
 		  intr->mac.ether_shost[4], intr->mac.ether_shost[5]);
-	if (ioctl(intr->sock, SIOCGIFINDEX, &intr->ifr) == -1) {
+	if (ioctl(intr->sock, SIOCGIFINDEX, &ifr) == -1) {
 		return (-1);
 	}
-	intr->index = intr->ifr.ifr_ifindex;
+	intr->index = ifr.ifr_ifindex;
 	ec_printf("LOCAL MAC %s\n", intr->macaddr);
-/*
-	strcpy(intr->ifr.ifr_name, intr->name);
-        intr->ifr.ifr_flags = 0;
-  
-        if (ioctl(intr->sock, SIOCGIFFLAGS, &intr->ifr) < 0 ){
-		perror("SIOCGIFFLAGS");
-		return -1;
-	}
- 
-        intr->ifr.ifr_flags = intr->ifr.ifr_flags || IFF_PROMISC || IFF_BROADCAST;
-	if ( ioctl(intr->sock, SIOCGIFFLAGS, &intr->ifr) < 0  ){
-		perror("SIOCGIFFLAGS");
-		return -1;
-	}
-*/
 	return 0;
 }
 
 int ecs_sock(ec_interface * intr)
 {
 	struct ifreq ifr;
+
 	intr->sock = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
 	if (intr->sock < 0) {
 		perror("socket failed:");

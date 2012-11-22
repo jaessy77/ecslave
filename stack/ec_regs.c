@@ -5,10 +5,6 @@
 #include "../include/ec_net.h"
 #include "ec_sii.h"
 
-#ifndef __KERNEL__
-#define NSEC_PER_SEC (1000000000L)
-#endif
-
 #define FREQUENCY 1000
 #define CLOCK_TO_USE CLOCK_REALTIME
 #define PERIOD_NS (NSEC_PER_SEC / FREQUENCY)
@@ -124,7 +120,6 @@ void ec_raw_get_ado(e_slave *ecs, int reg, uint8_t * data, int datalen)
 		ec_printf("%s insane ado 0x%x\n",__FUNCTION__,reg);
 		return;
 	}
-#ifndef __KERNEL__
 	if (reg == ECT_REG_DCSYSTIME){
 
 	    struct timespec tm;
@@ -137,8 +132,7 @@ void ec_raw_get_ado(e_slave *ecs, int reg, uint8_t * data, int datalen)
 		p = (uint8_t*)&tm.tv_nsec;
 	    memcpy(data, p, datalen);
 	    return;
-	  }
-#endif
+	}
 	if (reg >= ECT_REG_SM0 && reg <= ECT_REG_SM3) {
 		/* ethelan expects here a mail box*/
 		return	ec_sii_syncm(reg,  data, datalen);
