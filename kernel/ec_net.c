@@ -13,16 +13,20 @@
  *  grab the interface(s) ;
 */
 int ec_net_init(e_slave* ecs)
-{
-	return -1;
+{ 
+	ecs->intr[RX_] = kmalloc(GFP_KERNEL,);
+	ec_device_init(&ecs->intr[RX]);
+	ec_device_init(&ecs->intr[TX]);
+	return 0;
 }
 
 void tx_packet(uint8_t *buf, int size, ec_interface *intr)
 {
-
+	ec_device_send(
+		intr->tx_skb[intr->tx_ring_index], size);
 }
 
-int ec_is_nic_link_up(e_slave *ecs, int eth)
+int ec_is_nic_link_up(e_slave *ecs, ec_interface *intr)
 {
-	return 0;
+	return intr->link_state;
 }
