@@ -1,8 +1,8 @@
-#include "xgeneral.h"
+#include "../include/xgeneral.h"
 #include "ethercattype.h"
 #include "ecs_slave.h"
-#include "ec_net.h"
 #include "ec_mbox.h"
+#include "../include/ec_net.h"
 #include "ec_sii.h"
 
 #ifndef __KERNEL__
@@ -124,6 +124,7 @@ void ec_raw_get_ado(e_slave *ecs, int reg, uint8_t * data, int datalen)
 		ec_printf("%s insane ado 0x%x\n",__FUNCTION__,reg);
 		return;
 	}
+#ifndef __KERNEL__
 	if (reg == ECT_REG_DCSYSTIME){
 
 	    struct timespec tm;
@@ -137,6 +138,7 @@ void ec_raw_get_ado(e_slave *ecs, int reg, uint8_t * data, int datalen)
 	    memcpy(data, p, datalen);
 	    return;
 	  }
+#endif
 	if (reg >= ECT_REG_SM0 && reg <= ECT_REG_SM3) {
 		/* ethelan expects here a mail box*/
 		return	ec_sii_syncm(reg,  data, datalen);

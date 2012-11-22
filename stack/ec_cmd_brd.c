@@ -1,4 +1,4 @@
-#include "xgeneral.h"
+#include "../include/xgeneral.h"
 #include "ethercattype.h"
 #include "fsm_slave.h"
 #include "ec_regs.h"

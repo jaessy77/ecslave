@@ -1,10 +1,8 @@
-#include "xgeneral.h"
+#include "../include/xgeneral.h"
 #include "ethercattype.h"
 #include "ecs_slave.h"
 #include "ec_coe.h"
 #include "ec_mbox.h"
-
-
 
 void mbox_set_state(e_slave* ecs,
 	void (*state)(e_slave*, uint8_t* data,int datalen))

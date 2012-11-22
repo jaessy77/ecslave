@@ -4,7 +4,7 @@
 #include "ec_mbox.h"
 
 
-enum {
+typedef enum {
 	OD_LIST_REQUEST   = 0x01,	
 	OD_LIST_RESPONSE  = 0x02,
 	OBJ_DESC_REQUEST  = 0x03,

@@ -1,4 +1,4 @@
-#include "xgeneral.h"
+#include "../include/xgeneral.h"
 #include "ethercattype.h"
 #include "ec_process_data.h"
 #include "ecs_slave.h"
@@ -18,9 +18,11 @@ int init_process_data(e_slave *ecs)
 	if (pd.size <= 0 ){
 		return -1;
 	}	
+#ifndef __KERNEL__
 	pd.data = malloc(pd.size);
+#endif
 	memset(pd.data, 'x', pd.size);
-	printf("Process data size = %d\n",pd.size);
+	ec_printf("Process data size = %d\n",pd.size);
 	return 0;
 }
 
@@ -43,7 +45,7 @@ void normalize_sizes(e_slave *ecs, uint32_t *offset,uint16_t *datalen)
 {
 	int off  = (ec_station_address() -1) * pd.size + *offset;
 	if (off < 0) {
-		printf("%s off=%d  offset=%d  stafr=%hu\n",
+		ec_printf("%s off=%d  offset=%d  stafr=%hu\n",
 			__func__, off, *offset, ec_station_address());
 		return;
 	}
