@@ -1,25 +1,24 @@
 TARGET= ecslave
 OBJS  = \
-../src/ec_cmd_apwr.o \
-../src/ec_cmd_aprd.o \
-../src/ec_cmd_aprw.o \
-../src/ec_cmd_armw.o \
-../src/ec_cmd_brd.o \
-../src/ec_cmd_brw.o \
-../src/ec_cmd_bwr.o \
-../src/ec_cmd_fprd.o \
-../src/ec_cmd_fprw.o \
-../src/ec_cmd_fpwr.o \
-../src/ec_cmd_frmw.o \
-../src/ec_cmd_lrw.o \
-../src/ec_cmd_lrd.o \
-../src/ec_cmd_lwr.o \
-../src/ec_sii.o \
-../src/ec_regs.o \
-../src/ec_coe.o \
-../src/ec_mbox.o \
-../src/ec_process_data.o \
-src/ec_debug.o
+../stack/ec_cmd_apwr.o \
+../stack/ec_cmd_aprd.o \
+../stack/ec_cmd_aprw.o \
+../stack/ec_cmd_armw.o \
+../stack/ec_cmd_brd.o \
+../stack/ec_cmd_brw.o \
+../stack/ec_cmd_bwr.o \
+../stack/ec_cmd_fprd.o \
+../stack/ec_cmd_fprw.o \
+../stack/ec_cmd_fpwr.o \
+../stack/ec_cmd_frmw.o \
+../stack/ec_cmd_lrw.o \
+../stack/ec_cmd_lrd.o \
+../stack/ec_cmd_lwr.o \
+../stack/ec_sii.o \
+../stack/ec_regs.o \
+../stack/ec_coe.o \
+../stack/ec_mbox.o \
+../stack/ec_process_data.o
 
 CURRENT=`uname -r`
 KDIR = /lib/modules/$(CURRENT)/build/
@@ -29,7 +28,7 @@ obj-m      := $(TARGET).o
 $(TARGET)-objs   := $(OBJS)
 
 default:
-	make -C $(KDIR) SUBDIRS=$(PWD) modules
+	make -C $(KDIR) -I../include SUBDIRS=$(PWD) modules
 
 $(TARGET).o: $(OBJS)
 	$(LD) $(LD_RFLAG) -r -o $@ $(OBJS)
