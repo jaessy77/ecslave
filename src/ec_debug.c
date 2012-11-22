@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include "std.h"
 #include "ethercattype.h"
 
 void ec_dump_string(uint8_t *c,int len)

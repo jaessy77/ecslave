@@ -129,9 +129,8 @@ void ec_raw_get_ado(e_slave *ecs, int reg, uint8_t * data, int datalen)
 	    struct timespec tm;
 	    uint64_t t;
 	    uint8_t* p = (uint8_t *)&t;
-	    extern int do_clock_gettime(int, struct timespec *);
 
-	    do_clock_gettime(CLOCK_TO_USE, &tm);
+	    clock_gettime(CLOCK_TO_USE, &tm);
 	    t = TIMESPEC2NS(tm);
 	    if (datalen == 4)
 		p = (uint8_t*)&tm.tv_nsec;
