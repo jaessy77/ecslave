@@ -1,7 +1,7 @@
-#include  "std.h"
+#include "xgeneral.h"
+#include "ethercattype.h"
 #include "ec_net.h"
 #include "ecs_slave.h"
-#include "ethercattype.h"
 
 
 int ec_is_nic_link_up(e_slave *esv, int eth)

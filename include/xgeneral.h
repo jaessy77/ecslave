@@ -54,7 +54,6 @@ struct ether_header
 #include <net/if_arp.h>
 #include <arpa/inet.h>
 #include <string.h>
-#include "ethercattype.h"
 #include <net/ethernet.h>
 #include <arpa/inet.h>
 

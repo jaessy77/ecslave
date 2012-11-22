@@ -1,4 +1,4 @@
-#include "std.h"
+#include "xgeneral.h"
 #include "ethercattype.h"
 #include "ec_process_data.h"
 #include "ecs_slave.h"

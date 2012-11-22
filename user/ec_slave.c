@@ -1,6 +1,4 @@
-
-
-#include "std.h"
+#include "xgeneral.h"
 #include "ethercattype.h"
 #include "fsm_slave.h"
 #include "ecs_slave.h"

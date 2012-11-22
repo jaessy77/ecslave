@@ -1,4 +1,5 @@
-#include "std.h"
+#include "xgeneral.h"
+#include "ethercattype.h"
 #include "ecs_slave.h"
 #include "ec_mbox.h"
 #include "ec_regs.h"
