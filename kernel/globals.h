@@ -161,7 +161,7 @@ enum {
  * \param fmt format string (like in printf())
  * \param args arguments (optional)
  */
-#define EC_INFO(fmt, args...) \
+#define ECAT_INFO(fmt, args...) \
     printk(KERN_INFO "EtherCAT: " fmt, ##args)
 
 /** Convenience macro for printing EtherCAT-specific errors to syslog.
@@ -171,7 +171,7 @@ enum {
  * \param fmt format string (like in printf())
  * \param args arguments (optional)
  */
-#define EC_ERR(fmt, args...) \
+#define ECAT_ERR(fmt, args...) \
     printk(KERN_ERR "EtherCAT ERROR: " fmt, ##args)
 
 /** Convenience macro for printing EtherCAT-specific warnings to syslog.
@@ -181,7 +181,7 @@ enum {
  * \param fmt format string (like in printf())
  * \param args arguments (optional)
  */
-#define EC_WARN(fmt, args...) \
+#define ECAT_WARN(fmt, args...) \
     printk(KERN_WARNING "EtherCAT WARNING: " fmt, ##args)
 
 /** Convenience macro for printing EtherCAT debug messages to syslog.
@@ -191,7 +191,7 @@ enum {
  * \param fmt format string (like in printf())
  * \param args arguments (optional)
  */
-#define EC_DBG(fmt, args...) \
+#define ECAT_DBG(fmt, args...) \
     printk(KERN_DEBUG "EtherCAT DEBUG: " fmt, ##args)
 
 /*****************************************************************************/
