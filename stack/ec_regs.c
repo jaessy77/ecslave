@@ -106,9 +106,9 @@ void ec_raw_set_ado(e_slave *ecs, int reg, uint8_t * data, int datalen)
 	if (reg == ECT_REG_ALCTL){
 		memcpy(&ec_registers[ECT_REG_ALSTAT], data, datalen);
 	}
-	if (reg == ECT_REG_DCTIME0){
-		ecs->trigger_latch = 1;
-	} 
+	//if (reg == ECT_REG_DCTIME0){
+	//	ecs->trigger_latch = 1;
+	//} 
 }
 
 void ec_raw_get_ado(e_slave *ecs, int reg, uint8_t * data, int datalen)

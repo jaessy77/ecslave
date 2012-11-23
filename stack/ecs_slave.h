@@ -21,17 +21,19 @@ typedef struct {
 struct ec_device;
 
 typedef struct __e_slave__ {
+	uint8_t index;
 	uint8_t *pkt_head;
 	uint8_t *dgram_processed; /* current ethercat dgram processed */
 	uint8_t dgrams_cnt;
 	int pkt_size;
-	int trigger_latch;
+	int debug_level;
 	int interfaces_nr;
 	struct ec_device* intr[EC_MAX_PORTS];
 	int pdoe_sizes[TOT_PDOS]; /* description array of pdos sizes */
 	struct fsm_slave *fsm;	/* finite state machine */
 	fsm_coe  coe;
 	fsm_mbox mbox;
+	struct semaphore device_sem;
 } e_slave;
 
 typedef struct __e_slave__ ecat_node_t;
