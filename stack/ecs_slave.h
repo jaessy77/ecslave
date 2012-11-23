@@ -14,14 +14,13 @@ typedef struct {
 	uint8_t obj_subindex;
 } fsm_coe; 
 
-#define TOT_PDOS	4 /* change when change pdo entries number */
+#define TOT_PDOS		4 	/* change when change pdo entries number */
 #define HTYPE_ETHER     	0x1	/* Ethernet  */
 #define ETHERCAT_TYPE 		0x88a4
 
 struct ec_device;
 
 typedef struct __e_slave__ {
-	uint8_t index;
 	uint8_t *pkt_head;
 	uint8_t *dgram_processed; /* current ethercat dgram processed */
 	uint8_t dgrams_cnt;
@@ -31,9 +30,10 @@ typedef struct __e_slave__ {
 	struct ec_device* intr[EC_MAX_PORTS];
 	int pdoe_sizes[TOT_PDOS]; /* description array of pdos sizes */
 	struct fsm_slave *fsm;	/* finite state machine */
-	fsm_coe  coe;
+	fsm_coe coe;
 	fsm_mbox mbox;
-	struct semaphore device_sem;
+	uint8_t index;			/* used by etherlab debug api */
+	struct semaphore device_sem;	/* used by etherlab */
 } e_slave;
 
 typedef struct __e_slave__ ecat_node_t;

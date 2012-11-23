@@ -61,9 +61,14 @@ static inline int clock_gettime(int dummy __attribute__((unused)), struct timesp
 #include <string.h>
 #include <net/ethernet.h>
 #include <arpa/inet.h>
+#include <semaphore.h>
 
 #define xmalloc(size)	malloc(size)
 #define NSEC_PER_SEC (1000000000L)
+
+struct semaphore { 
+	sem_t sem;
+};
 
 #endif
 
