@@ -1,8 +1,8 @@
-#include "../include/xgeneral.h"
+#include "xgeneral.h"
 #include "ethercattype.h"
 #include "ecs_slave.h"
 #include "ec_mbox.h"
-#include "../include/ec_net.h"
+#include "ec_net.h"
 #include "ec_sii.h"
 
 #define FREQUENCY 1000

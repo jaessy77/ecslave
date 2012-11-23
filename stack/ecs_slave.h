@@ -1,7 +1,7 @@
 #ifndef __ECS_SLAVE_H__
 #define __ECS_SLAVE_H__
 
-#include "ec_device.h"
+
 struct __e_slave__;
 struct fsm_slave;
 
@@ -15,30 +15,28 @@ typedef struct {
 } fsm_coe; 
 
 #define TOT_PDOS	4 /* change when change pdo entries number */
+#define HTYPE_ETHER     	0x1	/* Ethernet  */
+#define ETHERCAT_TYPE 		0x88a4
+
+struct ec_device;
 
 typedef struct __e_slave__ {
-	
 	uint8_t *pkt_head;
 	uint8_t *dgram_processed; /* current ethercat dgram processed */
 	uint8_t dgrams_cnt;
 	int pkt_size;
 	int trigger_latch;
 	int interfaces_nr;
-	ec_device* intr[EC_MAX_PORTS];
+	struct ec_device* intr[EC_MAX_PORTS];
 	int pdoe_sizes[TOT_PDOS]; /* description array of pdos sizes */
 	struct fsm_slave *fsm;	/* finite state machine */
 	fsm_coe  coe;
 	fsm_mbox mbox;
-} e_slave;
-
-typedef e_slave ecat_node_t;/* used by files taken from etherlab */
+} e_slave, ecat_node_t;
 
 int  ecs_net_init(int ,char *argv[], e_slave *);
 int  ecs_init(e_slave *);
 void ecs_run(e_slave *);
-
-#define HTYPE_ETHER     	0x1	/* Ethernet  */
-#define ETHERCAT_TYPE 		0x88a4
 
 void ec_cmd_apwr(e_slave * slave, uint8_t *ecdgram);
 void ec_cmd_armw(e_slave * slave, uint8_t *ecdgram);
