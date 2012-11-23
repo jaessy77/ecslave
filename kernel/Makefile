@@ -27,7 +27,7 @@ CURRENT=`uname -r`
 KDIR = /lib/modules/$(CURRENT)/build/
 
 obj-m  := $(TARGET).o
-ccflags-y += -I$(PWD)/../include/ 
+ccflags-y += -I$(PWD)/../include/ -I$(PWD)/../stack/ -I$(PWD)/../devices/
 $(TARGET)-objs := $(OBJS)
 
 default:

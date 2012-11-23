@@ -1,7 +1,8 @@
 #include "xgeneral.h"
+#include "ec_device.h"
 #include "ethercattype.h"
-#include "fsm_slave.h"
 #include "ecs_slave.h"
+#include "fsm_slave.h"
 #include "ec_sii.h"
 #include "ec_regs.h"
 #include "ec_net.h"
@@ -24,7 +25,7 @@ uint16_t ec_dbg_wkc(e_slave *ecs)
 	return __ec_wkc(p);
 }
 
-void tx_packet(uint8_t* buf, int size, ec_device *intr)
+void tx_packet(uint8_t* buf, int size, struct ec_device *intr)
 {
 	int i;
 	int bytes;

@@ -32,7 +32,9 @@ typedef struct __e_slave__ {
 	struct fsm_slave *fsm;	/* finite state machine */
 	fsm_coe  coe;
 	fsm_mbox mbox;
-} e_slave, ecat_node_t;
+} e_slave;
+
+typedef struct __e_slave__ ecat_node_t;
 
 int  ecs_net_init(int ,char *argv[], e_slave *);
 int  ecs_init(e_slave *);

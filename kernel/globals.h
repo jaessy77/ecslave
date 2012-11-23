@@ -36,8 +36,8 @@
 #ifndef __EC_MASTER_GLOBALS_H__
 #define __EC_MASTER_GLOBALS_H__
 
-#include "../globals.h"
-#include "../include/ecrt.h"
+//#include "globals.h"
+//#include "ecrt.h"
 
 /******************************************************************************
  * EtherCAT master
@@ -145,54 +145,6 @@ typedef enum {
     /**< Acknowledge/Error bit (no actual state) */
 } ec_slave_state_t;
 
-/** Supported mailbox protocols.
- */
-enum {
-    EC_MBOX_AOE = 0x01, /**< ADS over EtherCAT */
-    EC_MBOX_EOE = 0x02, /**< Ethernet over EtherCAT */
-    EC_MBOX_COE = 0x04, /**< CANopen over EtherCAT */
-    EC_MBOX_FOE = 0x08, /**< File-Access over EtherCAT */
-    EC_MBOX_SOE = 0x10, /**< Servo-Profile over EtherCAT */
-    EC_MBOX_VOE = 0x20  /**< Vendor specific */
-};
-
-/** Slave information interface CANopen over EtherCAT details flags.
- */
-typedef struct {
-    uint8_t enable_sdo : 1; /**< Enable SDO access. */
-    uint8_t enable_sdo_info : 1; /**< SDO information service available. */
-    uint8_t enable_pdo_assign : 1; /**< PDO mapping configurable. */
-    uint8_t enable_pdo_configuration : 1; /**< PDO configuration possible. */
-    uint8_t enable_upload_at_startup : 1; /**< ?. */
-    uint8_t enable_sdo_complete_access : 1; /**< Complete access possible. */
-} ec_sii_coe_details_t;
-
-/** Slave information interface general flags.
- */
-typedef struct {
-    uint8_t enable_safeop : 1; /**< ?. */
-    uint8_t enable_not_lrw : 1; /**< Slave does not support LRW. */
-} ec_sii_general_flags_t;
-
-/** EtherCAT slave distributed clocks range.
- */
-typedef enum {
-    EC_DC_32, /**< 32 bit. */
-    EC_DC_64 /*< 64 bit for system time, system time offset and
-               port 0 receive time. */
-} ec_slave_dc_range_t;
-
-/** EtherCAT slave sync signal configuration.
- */
-typedef struct {
-    uint32_t cycle_time; /**< Cycle time [ns]. */
-    uint32_t shift_time; /**< Shift time [ns]. */
-} ec_sync_signal_t;
-
-/** Access states for SDO entries.
- *
- * The access rights are managed per AL state.
- */
 enum {
     EC_SDO_ENTRY_ACCESS_PREOP, /**< Access rights in PREOP. */
     EC_SDO_ENTRY_ACCESS_SAFEOP, /**< Access rights in SAFEOP. */
@@ -249,64 +201,4 @@ enum {
 #define EC_ABS(X) ((X) >= 0 ? (X) : -(X))
 
 /*****************************************************************************/
-
-extern char *ec_master_version_str;
-
-/*****************************************************************************/
-
-unsigned int ec_master_count(void);
-void ec_print_data(const uint8_t *, size_t);
-void ec_print_data_diff(const uint8_t *, const uint8_t *, size_t);
-size_t ec_state_string(uint8_t, char *, uint8_t);
-ssize_t ec_mac_print(const uint8_t *, char *);
-int ec_mac_is_zero(const uint8_t *);
-
-ec_master_t *ecrt_request_master_err(unsigned int);
-
-/*****************************************************************************/
-
-/** Code/Message pair.
- *
- * Some EtherCAT datagrams support reading a status code to display a certain
- * message. This type allows to map a code to a message string.
- */
-typedef struct {
-    uint32_t code; /**< Code. */
-    const char *message; /**< Message belonging to \a code. */
-} ec_code_msg_t;
-
-/*****************************************************************************/
-
-/** Generic request state.
- *
- * \attention If ever changing this, please be sure to adjust the \a
- * state_table in master/sdo_request.c.
- */
-typedef enum {
-    EC_INT_REQUEST_INIT,
-    EC_INT_REQUEST_QUEUED,
-    EC_INT_REQUEST_BUSY,
-    EC_INT_REQUEST_SUCCESS,
-    EC_INT_REQUEST_FAILURE
-} ec_internal_request_state_t;
-
-/*****************************************************************************/
-
-extern const ec_request_state_t ec_request_state_translation_table[];
-
-/*****************************************************************************/
-
-/** Origin type.
- */
-typedef enum {
-    EC_ORIG_INTERNAL, /**< Internal. */
-    EC_ORIG_EXTERNAL /**< External. */
-} ec_origin_t;
-
-/*****************************************************************************/
-
-typedef struct ec_slave ec_slave_t; /**< \see ec_slave. */
-
-/*****************************************************************************/
-
 #endif

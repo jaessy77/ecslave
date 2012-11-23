@@ -1,9 +1,10 @@
 #include "xgeneral.h"
+#include "ec_device.h"
 #include "ethercattype.h"
 #include "ecs_slave.h"
 #include "ec_net.h"
 
-int ec_is_nic_link_up(e_slave *esv, ec_device *intr)
+int ec_is_nic_link_up(e_slave *esv,struct ec_device *intr)
 {
 	int linkup = 0;
 	char intname[256];
@@ -28,7 +29,7 @@ LINKUP_EXIT:
 	return linkup;
 }
 
-int ecs_get_intr_conf(ec_device * intr)
+int ecs_get_intr_conf(struct ec_device * intr)
 {
 	struct ifreq ifr;
 	int ret;
@@ -99,7 +100,7 @@ int ecs_get_intr_conf(ec_device * intr)
 	return 0;
 }
 
-int ecs_sock(ec_device * intr)
+int ecs_sock(struct ec_device * intr)
 {
 	struct ifreq ifr;
 
@@ -122,11 +123,11 @@ int ecs_net_init(int argc, char *argv[], e_slave * esv)
 {
 	int i;
 	int k;
-	ec_device *intr;
+	struct ec_device *intr;
 
 	esv->interfaces_nr = 0;
 	for (i = 0, k = 1; k < argc; k++, i++) {
-		intr = esv->intr[i] = malloc(sizeof(ec_device));
+		intr = esv->intr[i] = malloc(sizeof(struct ec_device));
 		strncpy(intr->name,
 			argv[k], sizeof(intr->name));
 		if (ecs_sock(intr))
