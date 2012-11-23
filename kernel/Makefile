@@ -25,13 +25,13 @@ ec_debug.o \
 
 CURRENT=`uname -r`
 KDIR = /lib/modules/$(CURRENT)/build/
-PWD = $(shell pwd) 
 
-obj-m      := $(TARGET).o
-$(TARGET)-objs   := $(OBJS)
+obj-m  := $(TARGET).o
+ccflags-y += -I$(PWD)/../include/ 
+$(TARGET)-objs := $(OBJS)
 
 default:
-	make -C $(KDIR) -I../include SUBDIRS=$(PWD) modules
+	make -C $(KDIR) M=$(PWD) SUBDIRS=$(PWD) modules
 
 $(TARGET).o: $(OBJS)
 	$(LD) $(LD_RFLAG) -r -o $@ $(OBJS)
