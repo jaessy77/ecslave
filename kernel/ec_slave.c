@@ -10,24 +10,24 @@
 #include "ec_net.h"
 #include "ec_process_data.h"
 #include "ec_com.h"
-#include "offsched/offsched.h"
+#include "ec_offsched.h"
+#include "ec_filter.h"
 
 static struct fsm_slave fsm_slave;
 static e_slave ecs;
-static char *txdev;
-static char *rxdev;
-int debug_level;
+static char *txmac = 0;
+static char *rxmac = 0;
+static int debug_level =0;
 
 void ecs_module_cleanup(void)
 {
-	offsched_cleanup();	
+	ec_filter_cleanup();
+	ec_offsched_cleanup();	
 }
 
 int ecs_module_init(void)
 {
-	struct ec_device* device;
-
-  	if (ec_net_init(&ecs, rxdev, txdev) < 0){
+  	if (ec_net_init(&ecs, rxmac, txmac) < 0){
 		return -1;
 	}
 	ec_init_regs(&ecs);
@@ -37,11 +37,9 @@ int ecs_module_init(void)
 		return -1;
 	}
 	ecs.fsm = &fsm_slave;
-	//device = ecs.intr[RX_INT_INDEX];
 	ecs.dgram_processed = 0;
-	//	device->tx_skb[device->tx_ring_index]->data;
 	ecs.dgrams_cnt = 0;
-	if (offsched_init()){
+	if (ec_offsched_init()){
 		printk("Failed to initialize offsched\n");
 		return -1;
 	}
@@ -51,11 +49,11 @@ int ecs_module_init(void)
 module_init(ecs_module_init);
 module_exit(ecs_module_cleanup);
 
-module_param(txdev, charp, 0);
-MODULE_PARM_DESC(txdev, "device name of the receive interface");
+module_param(txmac, charp, 0);
+MODULE_PARM_DESC(txmac, "device name of the receive interface");
 
-module_param(rxdev, charp, 0);
-MODULE_PARM_DESC(rxdev, "device name of the receive interface");
+module_param(rxmac, charp, 0);
+MODULE_PARM_DESC(rxmac, "device name of the receive interface");
 
 module_param(debug_level, uint,0);
 MODULE_PARM_DESC(debug_level, "Debug level");

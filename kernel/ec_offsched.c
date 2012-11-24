@@ -2,6 +2,7 @@
 #include <linux/fs.h>		/* for file_operations */
 #include <linux/version.h>	/* versioning */
 #include <linux/cdev.h>
+#include "ec_offsched.h"
 
 #define MODULE_NAME "OFFSHCED"
 
@@ -22,9 +23,17 @@ extern void unregister_offsched(int cpuid);
  *    offshced_main is called as an offlet.
 */
 
-void offsched_main(void)
+//static struct list_head skb_list;
+
+void ec_offsched_main(void)
 {	
 	printk("offsched main cpu= %d\n",raw_smp_processor_id());	
+}
+
+void ec_process_pkt(struct sk_buff* skb)
+{
+	/* if returning packet then do not process it*/
+
 }
 
 /* return number of bytes done , negative value for error  */
@@ -63,14 +72,14 @@ struct file_operations driver_ops = {
 };
 
 
-void offsched_cleanup(void) 
+void ec_offsched_cleanup(void) 
 {
 	unregister_offsched(offline_cpuid);
 	printk(MODULE_NAME KERN_INFO "exit\n");
 	cdev_del(&cdev);
 }
 
-int offsched_init(void)
+int ec_offsched_init(void)
 {
 	int ret;
 	int base_minor = 0;
@@ -91,7 +100,6 @@ int offsched_init(void)
 		printk("Failed to cdev_add\n");
 		return -1;
 	}
-	register_offsched(offsched_main, offline_cpuid);
+	register_offsched(ec_offsched_main, offline_cpuid);
 	return ret;
 }
-

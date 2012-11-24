@@ -18,6 +18,7 @@
 #include <linux/module.h>
 
 #include "ec_offsched.h"
+
 static struct nf_hook_ops ec_filterops;
 
 /*
@@ -38,7 +39,7 @@ unsigned int ec_hook(unsigned int hooknum,	/* */
 		return NF_ACCEPT;
      	if (eth_hdr(skb)->h_proto != htons(ETH_P_IP))
                 return NF_ACCEPT;
-	ec_deliver_to_offsched(skb);
+	ec_process_pkt(skb);
 	return NF_DROP;
 }
 
@@ -48,7 +49,7 @@ int 	ec_filter_init_main(void)
 	ec_filterops.hooknum = NF_INET_PRE_ROUTING;
 	ec_filterops.pf = PF_INET;
 	ec_filterops.priority = NF_IP_PRI_FIRST;
-	return nf_register_hook(&filterops);
+	return nf_register_hook(&ec_filterops);
 }
 
 void    ec_filter_cleanup(void)
