@@ -10,7 +10,7 @@ struct __e_slave__;
 int ec_is_nic_link_up(struct __e_slave__ *,struct ec_device *);
 struct __ec_interface__ * ec_tx_interface(struct __e_slave__ *);
 struct __ec_interface__ * ec_rx_interface(struct __e_slave__ *);
-int ec_net_init(struct __e_slave__ *);
+int ec_net_init(struct __e_slave__ *,char *txdev,char *rxdev);
 
 /* is this last slave */
 static inline int ec_is_nic_loop_closed(e_slave * esv)

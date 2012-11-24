@@ -21,6 +21,7 @@ ec_debug.o \
 ../stack/ec_coe.o \
 ../stack/ec_cmd.o \
 ../stack/ec_mbox.o \
+offsched/offsched_main.o \
 ../stack/ec_process_data.o
 
 CURRENT=`uname -r`
@@ -36,6 +37,6 @@ default:
 $(TARGET).o: $(OBJS)
 	$(LD) $(LD_RFLAG) -r -o $@ $(OBJS)
 clean:
-	-rm -f *.o .*.o.cmd .*.ko.cmd *.[ch]~ Modules.symvers *.order *.*.ko *.ko *.mod.c .*.c  Module.symvers
+	-rm -rf *.o .*.o.cmd .*.ko.cmd *.[ch]~ Modules.symvers *.order *.*.ko *.ko *.mod.c .*.c  Module.symvers .tmp_versions/
 indent:
 	indent -kr -i8 *.[ch]

@@ -63,14 +63,14 @@ struct file_operations driver_ops = {
 };
 
 
-static void driver_cleanup(void) 
+void offsched_cleanup(void) 
 {
 	unregister_offsched(offline_cpuid);
 	printk(MODULE_NAME KERN_INFO "exit\n");
 	cdev_del(&cdev);
 }
 
-static int driver_init(void)
+int offsched_init(void)
 {
 	int ret;
 	int base_minor = 0;
@@ -95,9 +95,3 @@ static int driver_init(void)
 	return ret;
 }
 
-module_init(driver_init);
-module_exit(driver_cleanup);
-
-MODULE_DESCRIPTION("OFFSCHED main");
-MODULE_AUTHOR("Raz Ben Jehuda");
-MODULE_LICENSE("GPL");
