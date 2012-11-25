@@ -41,6 +41,7 @@ struct net_device *ec_find_dev_by_mac(char *mac)
 
 /*
  * scan network device list, find the interfaces by mac and 
+ * grab them.
 */
 int ec_net_init(e_slave* ecs, char* rxmac, char *txmac)
 {
@@ -62,7 +63,7 @@ int ec_net_init(e_slave* ecs, char* rxmac, char *txmac)
 		return -1;
 	}
 	ec_device_init(device, ecs);
-	ec_device_attach(device, netdev,NULL, NULL);
+	ec_device_attach(device, netdev);
 	ecs->intr[RX_INT_INDEX] = device;
 
 	/* closed loop */
@@ -81,17 +82,17 @@ int ec_net_init(e_slave* ecs, char* rxmac, char *txmac)
 		return -1;
 	}
 	ec_device_init(device, ecs);
-	ec_device_attach(device, netdev, NULL, NULL);
+	ec_device_attach(device, netdev);
 	ecs->intr[TX_INT_INDEX] = device;
 	return 0;
 }
 
 void tx_packet(uint8_t *buf, int size,struct ec_device *ecdev)
 {
-	ec_device_send(ecdev, size);
+	
 }
 
 int ec_is_nic_link_up(e_slave *ecs,struct ec_device *intr)
 {
-	return intr->link_state;
+	return intr->dev->ethtool_ops->get_link(intr->dev);
 }

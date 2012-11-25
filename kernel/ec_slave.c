@@ -22,7 +22,9 @@ static int debug_level =0;
 void ecs_module_cleanup(void)
 {
 	ec_filter_cleanup();
+#ifdef __OFFLINE_SCHDULER__
 	ec_offsched_cleanup();	
+#endif
 }
 
 int ecs_module_init(void)
@@ -39,10 +41,15 @@ int ecs_module_init(void)
 	ecs.fsm = &fsm_slave;
 	ecs.dgram_processed = 0;
 	ecs.dgrams_cnt = 0;
-	if (ec_offsched_init()){
+#ifdef __OFFLINE_SCHDULER__
+	if (ec_offsched_init(&ecs)){
 		printk("Failed to initialize offsched\n");
 		return -1;
 	}
+#else
+	/* launch hrtimer */
+#endif
+	ec_filter_init(&ecs);
 	return 0;
 }
 
@@ -58,6 +65,6 @@ MODULE_PARM_DESC(rxmac, "device name of the receive interface");
 module_param(debug_level, uint,0);
 MODULE_PARM_DESC(debug_level, "Debug level");
 
-MODULE_DESCRIPTION("ETHERCAT SLAVE OFFLINE Driver");
+MODULE_DESCRIPTION("ETHERCAT SLAVE");
 MODULE_AUTHOR("Raz Ben Jehuda");
 MODULE_LICENSE("GPL");

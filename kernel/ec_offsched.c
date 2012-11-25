@@ -3,14 +3,16 @@
 #include <linux/version.h>	/* versioning */
 #include <linux/cdev.h>
 #include "ec_offsched.h"
+#include "ecs_slave.h"
 
-#define MODULE_NAME "OFFSHCED"
+#define MODULE_NAME "OFFSHCED :"
 
 static int    devices_count  = 2;
 static dev_t  device_number;
 static struct cdev cdev; 
 static int offline_cpuid = 1;
-
+static int offsched_on =  0;
+e_slave *eslave = 0;
 extern void register_offsched(void (*callback)(void), int cpuid);
 extern void unregister_offsched(int cpuid);
 
@@ -26,41 +28,32 @@ extern void unregister_offsched(int cpuid);
 //static struct list_head skb_list;
 
 void ec_offsched_main(void)
-{	
-	printk("offsched main cpu= %d\n",raw_smp_processor_id());	
-}
-
-void ec_process_pkt(struct sk_buff* skb)
 {
-	/* if returning packet then do not process it*/
-
+	offsched_on = 1;	
+	printk(MODULE_NAME "Main cpu= %d\n",
+		raw_smp_processor_id());	
+	offsched_on = 0;	
 }
 
-/* return number of bytes done , negative value for error  */
 int driver_open(struct inode *inode, struct file *filp)
 {
-	printk(MODULE_NAME KERN_INFO "open\n");
 	return 0;
 }
 
-/* return number of bytes done , negative value for error  */
 static ssize_t driver_write(struct file *filp,
 	const char __user *umem, size_t size, loff_t *off)
 {
-	printk(MODULE_NAME KERN_INFO "write\n");
 	return -1;
 }
 
 static ssize_t driver_read(struct file *filp, char __user *umem, 
 				size_t size, loff_t *off)
 {
-	printk(MODULE_NAME KERN_INFO "read \n");
 	return -1;
 }
 
 int driver_close(struct inode *inode, struct file *filp)
 {
-	printk(MODULE_NAME KERN_INFO "close \n");
 	return 0;
 }
 
@@ -75,17 +68,17 @@ struct file_operations driver_ops = {
 void ec_offsched_cleanup(void) 
 {
 	unregister_offsched(offline_cpuid);
-	printk(MODULE_NAME KERN_INFO "exit\n");
+	printk(MODULE_NAME  "exit\n");
 	cdev_del(&cdev);
 }
 
-int ec_offsched_init(void)
+int ec_offsched_init(e_slave *ecs)
 {
 	int ret;
 	int base_minor = 0;
 	int index = 1;
 
-	printk(MODULE_NAME KERN_INFO "init\n");
+	printk(MODULE_NAME "init\n");
 
         if (alloc_chrdev_region(&device_number,
                    base_minor, devices_count, "offsched")) {
@@ -97,9 +90,10 @@ int ec_offsched_init(void)
 	ret = cdev_add(&cdev,
             MKDEV(MAJOR(device_number), index), devices_count);
 	if (ret < 0 ){
-		printk("Failed to cdev_add\n");
+		printk(MODULE_NAME "Failed to cdev_add\n");
 		return -1;
 	}
 	register_offsched(ec_offsched_main, offline_cpuid);
+	eslave = ecs; /* save locally for this module */
 	return ret;
 }
