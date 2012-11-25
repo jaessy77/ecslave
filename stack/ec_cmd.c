@@ -5,8 +5,9 @@
 #include "ec_sii.h"
 #include "ec_regs.h"
 #include "ec_process_data.h"
-#include "../include/ec_com.h"
-#include "../include/ec_net.h"
+#include "ec_com.h"
+#include "ec_net.h"
+#include "ec_cmd.h"
 
 #define  WORKING_CNT_SIZE 2
 
@@ -15,7 +16,7 @@ void ecs_process_next_dgram(e_slave * ecs,uint8_t *d)
 	if (--ecs->dgrams_cnt) {
 		/* move to next packet */
 		ecs->dgram_processed += WORKING_CNT_SIZE + sizeof(ec_dgram) + __ec_dgram_dlength(d);
-		return __set_fsm_state(ecs, ecs_process_packet);
+		return __set_fsm_state(ecs, ecs_process_cmd);
 	}
 	/* pass packet back to next slave */
 	tx_packet(ecs->pkt_head, ecs->pkt_size,  ecs->intr[TX_INT_INDEX]);
@@ -40,7 +41,7 @@ int  ec_nr_dgrams(uint8_t *raw_pkt)
 	return i;
 }
 
-void ecs_process_packet(e_slave * ecs, uint8_t *dgram_ec)
+void ecs_process_cmd(e_slave * ecs, uint8_t *dgram_ec)
 {
 	__set_fsm_state(ecs, ec_cmd_nop);
 	
@@ -104,4 +105,17 @@ void ecs_process_packet(e_slave * ecs, uint8_t *dgram_ec)
 		ec_printf("unknown command %d\n",__ec_dgram_command(dgram_ec));
 	}
 	ecs->fsm->state(ecs, dgram_ec);
+}
+
+void ec_pkt_process(e_slave *ecs,int len, uint8_t *dgram_ec)
+{
+	ecs->pkt_head = dgram_ec;
+	ecs->pkt_size = len;
+	// grab first ecat dgram
+	ecs->dgram_processed =  __ecat_frameheader(ecs->pkt_head) + sizeof(ec_frame_header);
+	ecs->dgrams_cnt = ec_nr_dgrams(ecs->pkt_head);
+	__set_fsm_state(ecs, ecs_process_cmd);
+	while (ecs->fsm->state) {
+		ecs->fsm->state(ecs, ecs->dgram_processed);
+	}
 }
