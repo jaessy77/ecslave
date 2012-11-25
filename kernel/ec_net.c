@@ -86,7 +86,7 @@ int ec_net_init(e_slave * ecs, char *rxmac, char *txmac)
 	return 0;
 }
 
-void tx_packet(	uint8_t *buf __attribute__ ((unused)),
+void ec_tx_pkt(	uint8_t *buf __attribute__ ((unused)),
 		int size __attribute__ ((unused)), 
 		struct ec_device *txdev)
 {

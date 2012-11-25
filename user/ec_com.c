@@ -26,7 +26,7 @@ uint16_t ec_dbg_wkc(e_slave *ecs)
 	return __ec_wkc(p);
 }
 
-void tx_packet(uint8_t* buf, int size, struct ec_device *intr)
+void ec_tx_pkt(uint8_t* buf, int size, struct ec_device *intr)
 {
 	int i;
 	int bytes;
@@ -105,7 +105,7 @@ void passing_pkt(u_char *user, const struct pcap_pkthdr *h,
 	if (is_outgoing_pkt(ecs, d)){
 		return;
 	}
-	tx_packet(d ,h->len , ecs->intr[RX_INT_INDEX]);
+	ec_tx_pkt(d ,h->len , ecs->intr[RX_INT_INDEX]);
 }
 
 void *pkt_passing_thread(void *ecs)

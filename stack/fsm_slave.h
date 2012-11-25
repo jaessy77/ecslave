@@ -19,8 +19,7 @@ static inline void __set_fsm_state(e_slave * slave, void (*state) (e_slave *,uin
 }
 
 void ecs_rx_packet(e_slave *,uint8_t *d);
-//void ecs_process_packet(e_slave *,uint8_t *d);
 int ec_capture(e_slave *ecs);
-void tx_packet(uint8_t *buf, int size, struct ec_device *);
+void ec_tx_pkt(uint8_t *buf, int size, struct ec_device *);
 
 #endif

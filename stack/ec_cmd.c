@@ -21,7 +21,7 @@ void ecs_process_next_dgram(e_slave * ecs,uint8_t *d)
 		return __set_fsm_state(ecs, ecs_process_cmd);
 	}
 	/* pass packet back to next slave */
-	tx_packet(ecs->pkt_head, ecs->pkt_size, ecs->intr[TX_INT_INDEX]);
+	ec_tx_pkt(ecs->pkt_head, ecs->pkt_size, ecs->intr[TX_INT_INDEX]);
 	 __set_fsm_state(ecs, NULL); /* move to next interface in ec_poll */
 }
 
