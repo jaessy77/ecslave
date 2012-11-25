@@ -70,4 +70,10 @@ void ec_device_clear_stats(
         ec_device_t *device /**< EtherCAT device */
         );
 
+/*****************************************************************************/
+void ec_device_send(
+	ec_device_t *device,
+	struct sk_buff *skb
+	);
+
 #endif

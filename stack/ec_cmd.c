@@ -15,11 +15,13 @@ void ecs_process_next_dgram(e_slave * ecs,uint8_t *d)
 {
 	if (--ecs->dgrams_cnt) {
 		/* move to next packet */
-		ecs->dgram_processed += WORKING_CNT_SIZE + sizeof(ec_dgram) + __ec_dgram_dlength(d);
+		ecs->dgram_processed += 
+			WORKING_CNT_SIZE + 
+			sizeof(ec_dgram) + __ec_dgram_dlength(d);
 		return __set_fsm_state(ecs, ecs_process_cmd);
 	}
 	/* pass packet back to next slave */
-	tx_packet(ecs->pkt_head, ecs->pkt_size,  ecs->intr[TX_INT_INDEX]);
+	tx_packet(ecs->pkt_head, ecs->pkt_size, ecs->intr[TX_INT_INDEX]);
 	 __set_fsm_state(ecs, NULL); /* move to next interface in ec_poll */
 }
 
@@ -32,7 +34,10 @@ int  ec_nr_dgrams(uint8_t *raw_pkt)
 		
 	f = frame_size;
 	for (;frame_size > 0;i++){
-		frame_size -= (sizeof(ec_dgram) + __ec_dgram_dlength(dgram) + WORKING_CNT_SIZE) ;
+		frame_size -= 
+			(sizeof(ec_dgram) + 
+			__ec_dgram_dlength(dgram)
+			 + WORKING_CNT_SIZE) ;
 		dgram += sizeof(ec_dgram) + WORKING_CNT_SIZE + __ec_dgram_dlength(dgram); 		
 	}
 	if (frame_size < 0){
