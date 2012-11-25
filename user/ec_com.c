@@ -8,6 +8,7 @@
 #include "ec_net.h"
 #include "ec_process_data.h"
 #include "ec_com.h"
+#include "ec_cmd.h"
 #include <pcap/pcap.h>
 
 static pcap_t *tx_handle = 0;
@@ -76,7 +77,7 @@ static int is_outgoing_pkt(e_slave *ecs, uint8_t *d)
 	return 0;
 }
 
-static void pkt_process(u_char *user, const struct pcap_pkthdr *h,
+static void ec_pkt_filter(u_char *user, const struct pcap_pkthdr *h,
                                    const u_char *bytes)
 {
 	e_slave *ecs = (e_slave *)user;
@@ -88,15 +89,7 @@ static void pkt_process(u_char *user, const struct pcap_pkthdr *h,
 	if (is_outgoing_pkt(ecs, d)){
 		return;
 	}
-	ecs->pkt_head = d;
-	ecs->pkt_size = h->len;
-	// grab first ecat dgram
-	ecs->dgram_processed =  __ecat_frameheader(ecs->pkt_head) + sizeof(ec_frame_header);
-	ecs->dgrams_cnt = ec_nr_dgrams(ecs->pkt_head);
-	__set_fsm_state(ecs, ecs_process_packet);
-	while (ecs->fsm->state) {
-		ecs->fsm->state(ecs, ecs->dgram_processed);
-	}
+	ec_process_datagrams(ecs, h->len, d);
 }
 
 /* handler of traffic that is passing by back to master */
@@ -149,6 +142,6 @@ int ec_capture(e_slave *ecs)
 	}
 	while(1) {
 		int num_pkt = 0;
-		pcap_loop(rx_handle, num_pkt, pkt_process ,(u_char *)ecs);
+		pcap_loop(rx_handle, num_pkt, ec_pkt_filter ,(u_char *)ecs);
 	}
 }
