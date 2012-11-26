@@ -25,12 +25,26 @@ int ec_mac_equal(const uint8_t * mac1, /**< First MAC address. */
 	return 1;
 }
 
-struct net_device *ec_find_dev_by_mac(char *mac)
+struct net_device *ec_find_dev_by_mac(const uint8_t *mac)
 {
+ 	char *endp;
+	int i = 0;
+	int j = 0;
+	int len = strlen(mac);
 	struct net_device *netdev;
+	uint8_t tempmac[ETH_ALEN];
+	
+	for ( ; j <  len; i++){
+		if ( j + 2 >= len )
+			 j = len-2;
+		endp = (char *)&mac[j+2]; 
+		tempmac[i] = simple_strtol( &mac[j], &endp, 16);
+		printk("mac= %x\n",tempmac[i]);
+		j += 3;
+	}
 
 	for_each_netdev(&init_net, netdev) {
-		if (ec_mac_equal(mac, netdev->dev_addr)) {
+		if (ec_mac_equal(tempmac, netdev->dev_addr)) {
 			return netdev;
 		}
 	}
@@ -65,7 +79,7 @@ int ec_net_init(e_slave * ecs, char *rxmac, char *txmac)
 	ecs->intr[RX_INT_INDEX] = device;
 
 	/* closed loop */
-	if (!rxmac) {
+	if (!txmac) {
 		ecs->intr[TX_INT_INDEX] = ecs->intr[RX_INT_INDEX];
 		return 0;
 	}
