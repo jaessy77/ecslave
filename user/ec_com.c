@@ -33,7 +33,7 @@ void ec_tx_pkt(uint8_t* buf, int size, struct ec_device *intr)
 	struct ether_header *eh = (struct ether_header *)buf;
 	struct sockaddr_ll socket_address = { 0 };
 
-	for (i = 0; i < ETH_ALEN - 2; i++) {
+	for (i = 0; i < ETH_ALEN ; i++) {
 		intr->mac.ether_dhost[i] = 0xFF;
 	}
 	intr->mac.ether_type = htons(ETHERCAT_TYPE);
@@ -49,7 +49,6 @@ void ec_tx_pkt(uint8_t* buf, int size, struct ec_device *intr)
 	       &intr->mac.ether_shost, 
 		sizeof(intr->mac.ether_shost));
 	eh->ether_type = htons(ETHERCAT_TYPE);
-
 	bytes = sendto(intr->sock,
 		       buf,
 		       size, 0,
