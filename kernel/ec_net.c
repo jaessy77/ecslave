@@ -39,7 +39,6 @@ struct net_device *ec_find_dev_by_mac(const uint8_t *mac)
 			 j = len-2;
 		endp = (char *)&mac[j+2]; 
 		tempmac[i] = simple_strtol( &mac[j], &endp, 16);
-		printk("mac= %x\n",tempmac[i]);
 		j += 3;
 	}
 
@@ -77,6 +76,7 @@ int ec_net_init(e_slave * ecs, char *rxmac, char *txmac)
 	ec_device_init(device, ecs);
 	ec_device_attach(device, netdev);
 	ecs->intr[RX_INT_INDEX] = device;
+	EC_NODE_INFO(ecs, "Loaded RX listener on device %s",netdev->name);
 
 	/* closed loop */
 	if (!txmac) {
@@ -97,6 +97,7 @@ int ec_net_init(e_slave * ecs, char *rxmac, char *txmac)
 	ec_device_init(device, ecs);
 	ec_device_attach(device, netdev);
 	ecs->intr[TX_INT_INDEX] = device;
+	EC_NODE_INFO(ecs, "Loaded Tx listener on device %s",netdev->name);
 	return 0;
 }
 

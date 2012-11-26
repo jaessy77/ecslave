@@ -11,7 +11,7 @@
 #include "ec_process_data.h"
 #include "ec_com.h"
 #include "ec_offsched.h"
-#include "ec_filter.h"
+#include "ecat_protocol.h"
 
 static struct fsm_slave fsm_slave;
 static e_slave ecs;
@@ -21,7 +21,7 @@ static int debug_level = 0;
 
 void ecs_module_cleanup(void)
 {
-	ec_filter_cleanup();
+	ecat_proto_cleanup();
 #ifdef __OFFLINE_SCHDULER__
 	ec_offsched_cleanup();
 #endif
@@ -49,7 +49,7 @@ int ecs_module_init(void)
 #else
 	/* launch hrtimer */
 #endif
-	ec_filter_init(&ecs);
+	ecat_proto_init(&ecs);	
 	return 0;
 }
 

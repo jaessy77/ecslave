@@ -1,7 +1,7 @@
 TARGET= ecslave
 OBJS  = ec_slave.o \
 ec_net.o \
-ec_filter.o \
+ecat_protocol.o \
 ec_debug.o \
 ec_device.o \
 ../stack/ec_cmd_apwr.o \
