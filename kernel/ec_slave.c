@@ -57,10 +57,10 @@ module_init(ecs_module_init);
 module_exit(ecs_module_cleanup);
 
 module_param(txmac, charp, 0);
-MODULE_PARM_DESC(txmac, "device name of the receive interface");
+MODULE_PARM_DESC(txmac, "Mac address of the transmssion interface");
 
 module_param(rxmac, charp, 0);
-MODULE_PARM_DESC(rxmac, "device name of the receive interface");
+MODULE_PARM_DESC(rxmac, "mac address of the receive interface");
 
 module_param(debug_level, uint, 0);
 MODULE_PARM_DESC(debug_level, "Debug level");
