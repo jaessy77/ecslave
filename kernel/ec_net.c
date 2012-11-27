@@ -73,6 +73,7 @@ int ec_net_init(e_slave * ecs, char *rxmac, char *txmac)
 		EC_NODE_ERR(ecs, "out of memory for %s\n", rxmac);
 		return -1;
 	}
+	device->processed_skb = 0;
 	ec_device_init(device, ecs);
 	ec_device_attach(device, netdev);
 	ecs->intr[RX_INT_INDEX] = device;
@@ -81,6 +82,7 @@ int ec_net_init(e_slave * ecs, char *rxmac, char *txmac)
 	/* closed loop */
 	if (!txmac) {
 		ecs->intr[TX_INT_INDEX] = ecs->intr[RX_INT_INDEX];
+		EC_NODE_INFO(ecs, "Last slave . TX is %s",netdev->name);
 		return 0;
 	}
 	netdev = ec_find_dev_by_mac(txmac);
@@ -94,6 +96,7 @@ int ec_net_init(e_slave * ecs, char *rxmac, char *txmac)
 		EC_NODE_ERR(ecs, "out of memory for %s\n", txmac);
 		return -1;
 	}
+	device->processed_skb = 0;
 	ec_device_init(device, ecs);
 	ec_device_attach(device, netdev);
 	ecs->intr[TX_INT_INDEX] = device;
@@ -106,8 +109,8 @@ void ec_tx_pkt(	uint8_t *buf __attribute__ ((unused)),
 		struct ec_device *txdev)
 {
 	struct ec_device* rxdev = txdev->ecat_node->intr[RX_INT_INDEX];
-	ec_device_send(txdev,
-			rxdev->processed_skb);
+	ec_device_send(rxdev,
+			txdev->processed_skb);
 	txdev->processed_skb = 0;
 }
 
