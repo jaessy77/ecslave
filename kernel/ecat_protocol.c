@@ -42,7 +42,7 @@ static int returning_pkt(struct sk_buff *skb)
 void ecat_process_pkt(struct sk_buff *skb)
 {
 	int ret;
-	
+
 	ret = returning_pkt(skb);
 	if (ret == 1) {
 		ec_device_send(eslave->intr[RX_INT_INDEX], skb);
@@ -67,6 +67,11 @@ static int ecat_rcv(struct sk_buff *skb, struct net_device *dev,
 {
 	if (eth_hdr(skb)->h_proto != htons(ETH_P_ECAT))
 		return   NET_RX_DROP;
+	if (skb_is_nonlinear(skb)){
+		printk("packet split not supported yet\n");
+		return   NET_RX_DROP;
+	}
+	skb_push(skb, sizeof(struct ethhdr));
 	ecat_process_pkt(skb);
 	return NET_RX_SUCCESS;
 }
