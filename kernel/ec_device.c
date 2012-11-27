@@ -69,7 +69,10 @@ void ec_device_clear_stats(ec_device_t * device
 void ec_device_send(struct ec_device *device, struct sk_buff *skb)
 {
 	int ret;
-
+	if (!skb){
+		printk("no skb\n");
+		return;
+	}
 	/* copy device's mac . better for debugging */
 	memcpy(eth_hdr(skb)->h_source, device->dev->dev_addr,ETH_ALEN);
 	ret =  device->dev->netdev_ops->ndo_start_xmit(skb, device->dev);

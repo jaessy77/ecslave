@@ -45,8 +45,9 @@ void ecat_process_pkt(struct sk_buff *skb)
 
 	ret = returning_pkt(skb);
 	if (ret == 1) {
+		/* send skb back to master  */
 		ec_device_send(eslave->intr[RX_INT_INDEX], skb);
-		eslave->intr[RX_INT_INDEX]->processed_skb = NULL;
+		eslave->intr[TX_INT_INDEX]->processed_skb = NULL;
 		return;
 	}
 	if (eslave->intr[RX_INT_INDEX]->processed_skb){
