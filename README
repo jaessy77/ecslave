@@ -1,47 +1,73 @@
+27.11.2012
 
-Silly Ethercat Slave
+	Linux Ethercat Slave
 
-ecslave comes in two versions, user space and kernel space.
+
+Purposes of this project are:
+
+1. provide a distributed real time linux platform for preempt rt. meaning, have 
+   several replicas of the same task no different nodes wakeup at the same time.
+   when same time is up to 10us differences.
+
+2. unified get time of day. provide a clock resource so that each application in the
+   system that takes the time will get the same time.
+
+3. Provide light ethercat with sockets and regular user space interfaces.
+
+Though I cannot compete with FPGAs , it is my belief that it is possible to reach 100KHZ
+( ie, 10us jitter ) in linux preempt rt. 
+
+
+
+*****
+Ecslave comes in two main modes, user space and kernel space.
 The user space is meant to be used as a tool for debugging 
 the ethercat stack. The kernel module is aimed to provide a 
 low latency respnosiveness. 
 
 	User space design
 
-in short, two threads, each thread is in charge of capturing packets
-from its assigned network device and passing them to the ethercat protocol
+Two threads, each thread is in charge of capturing packets from 
+its assigned network device and passing them to the ethercat protocol
 if needed.
 
 	Kernel space Design
+
 This module is composed from several software components.
-1. the ethercat stack. 
-2. offline scheduler. 
+1. Light Ethercat stack. 
+2. Ethercat sockets
+2. programmable sw/hw timer. ( hpet, hrtimer , offline scheduler...) 
 3. user space task executing in preempt rt kernel. 
 
-Ethercat packet flow is ring toplogy. when a ring can is implemented
-on a full duplex ehtercat cards so it actually a line. 
+Ethercat packet flow is in ring toplogy. when a ring can is implemented
+on a full duplex ehternet cards so it is actually a line. 
 
 
-	TX path
+			TX path
+
 master.. --> rx interface -->  slave --> tx interface .... ___
 							      |
-	RX path						      |
+			RX path				      |
 				 		    	      |
 master.. <--  rx interface <-- slave <---tx interface <-... __|
  
 
-TX path
-*******
-pkt-----> rx interface -->offline napi --> 
-			if packet is not ethercat 
-				pass packet to network stack by rasing a softirq
-				return 
-			process ethercat packet in offline context 
-			transmit packet on tx interface 
-			
+Ethercat stack receives a packet, processes it ( in a softirq  
+context) and passes it to the next slave. processing is done kernel
+mode. 
+A ethercat slave is executing in two main modes:
 
-RX path
-*******
-receive path is done in an offline context. 
+1. Free run.
+2. Distributed clock 
 
+Free run means that the slave has no notion of time. it simply gets the
+packet, processes and then passes it forward ( or back ).
+Distributed clock is when a slave performs its work timed events. The rate
+of the event is programmed by the master.
 
+Ethercat can be thought of an implementation for a distributed real time system.
+as all drives must synchronize their events. Ethercat drives do that in FPGA so
+the events are accurate up to the micorsecond or very close.
+Ethercat is cheap ( rj45 ethernet connectors ) and very common in the automation world. 
+
+So, why not use Linux ?
