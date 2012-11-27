@@ -54,8 +54,6 @@ void ec_init_regs(e_slave* esv)
 */
 uint32_t ec_cyclic_activation(void)
 {
-//	uint16_t *pdi_control = (uint16_t *)&ec_registers[ECT_REG_PDICTL];
-//	return *pdi_control & 0x0C00;
 	return ec_registers[ECT_REG_DCSYNCACT] & 0b001;
 }
 
@@ -106,9 +104,6 @@ void ec_raw_set_ado(e_slave *ecs, int reg, uint8_t * data, int datalen)
 	if (reg == ECT_REG_ALCTL){
 		memcpy(&ec_registers[ECT_REG_ALSTAT], data, datalen);
 	}
-	//if (reg == ECT_REG_DCTIME0){
-	//	ecs->trigger_latch = 1;
-	//} 
 }
 
 void ec_raw_get_ado(e_slave *ecs, int reg, uint8_t * data, int datalen)
