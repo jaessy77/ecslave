@@ -21,6 +21,7 @@ stack/ec_mbox.c \
 stack/ec_cmd.c \
 stack/ecat_timer_common.c \
 stack/ec_process_data.c \
+stack/ec_coe_sdo_mapping.c \
 user/ec_slave.c \
 user/ecat_timer.c \
 user/ec_net.c \

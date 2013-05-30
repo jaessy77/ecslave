@@ -16,7 +16,6 @@ typedef enum {
 
 #define MBOX_UNKNOWN_TYPE 0x0
 #define MBOX_COE_TYPE 0x03
-#define NR_SDOS 2
 
 void coe_parser(ecat_slave *ecs, int reg, uint8_t * data, int datalen);
 
@@ -24,7 +23,7 @@ void coe_parser(ecat_slave *ecs, int reg, uint8_t * data, int datalen);
 typedef struct {
 	uint16_t list_type __attribute__packed__;
 	uint16_t index[1] __attribute__packed__;
-}coe_sdo_service_data;
+} coe_sdo_service_data;
 
 typedef struct __coe_sdo__ {
 

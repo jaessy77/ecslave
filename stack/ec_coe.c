@@ -4,6 +4,7 @@
 #include "ec_mbox.h"
 #include "ec_regs.h"
 #include "ec_coe.h"
+#include "ec_coe_sdo_mapping.h"
 
 void od_list_response(ecat_slave *ecs, uint8_t* data,int datalen)
 {
@@ -16,7 +17,7 @@ void od_list_response(ecat_slave *ecs, uint8_t* data,int datalen)
 
 	mbxhdr->type =  MBOX_COE_TYPE;
 	/* see ec_fsm_coe_dict_response, data pointer is moved 6 bytes  */
-	mbxhdr->len = 8 + NR_SDOS * 2; 
+	mbxhdr->len = 8 + ec_nr_sdos() * 2; 
 	coehdr->coe_service = COE_SDO_INFO;
 	sdoinfo->opcode = OD_LIST_RESPONSE;
 	srvdata->list_type = 0x1;
@@ -24,9 +25,7 @@ void od_list_response(ecat_slave *ecs, uint8_t* data,int datalen)
 	 * Do the reponse
 	*/
 	sdoinfo->opcode   = 0x02; // table 43
-	srvdata->index[0] = 0x1234;
-	srvdata->index[1] = 0x5678;
-	srvdata->index[2] = 0x0;;
+	ec_populate_sdos(srvdata);
 }
 
 // table 45

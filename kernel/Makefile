@@ -20,6 +20,7 @@ OBJS  = \
 ../stack/ec_cmd_lrw.o \
 ../stack/ec_cmd_lrd.o \
 ../stack/ec_cmd_lwr.o \
+../stack/ec_coe_sdo_mapping.o \
 ../stack/ec_sii.o \
 ../stack/ec_regs.o \
 ../stack/ec_coe.o \
