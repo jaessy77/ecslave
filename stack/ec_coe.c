@@ -176,11 +176,24 @@ void coe_sdo_info(ecat_slave* ecs, uint8_t * data, int datalen)
 	}
 }
 
-void coe_parser(ecat_slave* ecs, int reg, uint8_t * data, int datalen)
+void coe_sdo_request(ecat_slave* ecs, int ado, uint8_t *data, int datalen)
+{
+	coe_sdo *coehdr = __coe_sdo(data);
+        
+	ec_sdo_action(ecs, coehdr->index, coehdr->subindex, data, datalen);
+}
+
+void coe_sdo_response(ecat_slave* ecs, int ado, uint8_t *data, int datalen)
+{
+	coe_sdo *coehdr = __coe_sdo(data);
+	ec_sdo_action(ecs, coehdr->index, coehdr->subindex, data, datalen);
+}
+
+void coe_parser(ecat_slave* ecs, int ado, uint8_t * data, int datalen)
 {
 	coe_header *hdr = __coe_header(data);
 
-	if (reg > __sdo_high()){		
+	if (ado > __sdo_high()){	
 		return;
 	}
 
@@ -189,8 +202,10 @@ void coe_parser(ecat_slave* ecs, int reg, uint8_t * data, int datalen)
 	case COE_EMERGENCY:
 		break;
 	case COE_SDO_REQUEST:
+		coe_sdo_request(ecs, ado, data, datalen);
 		break;
 	case COE_SDO_RESPONSE:
+		coe_sdo_response(ecs, ado, data, datalen);
 		break;
 	case COE_TX_PDO:
 		break;

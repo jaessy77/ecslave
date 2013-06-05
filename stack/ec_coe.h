@@ -26,7 +26,6 @@ typedef struct {
 } coe_sdo_service_data;
 
 typedef struct __coe_sdo__ {
-
 	mbox_header mbxhdr;
 	coe_header coehdr;
 	uint8_t res:4, complete_access:1, cmd:3;
@@ -34,5 +33,10 @@ typedef struct __coe_sdo__ {
 	uint8_t subindex;
 	uint8_t data[4];
 }coe_sdo;
+
+static inline coe_sdo * __coe_sdo(uint8_t *data)
+{
+	return (coe_sdo *)&data[0];
+}
 
 #endif
