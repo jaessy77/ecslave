@@ -1,4 +1,3 @@
-#include <Arduino.h>
 #include "../include/xgeneral.h"
 #include "ethercattype.h"
 #include "ecs_slave.h"
@@ -27,8 +26,6 @@ void ec_sdo_action(ecat_slave* ecs,
 		uint16_t index, uint16_t subindex,
 		uint8_t* data, int datalen)
 {	
-	Serial.println("ec sdo action"); 
-	Serial.println(index); 
 
 	switch (index) {
 	case SDO1:
