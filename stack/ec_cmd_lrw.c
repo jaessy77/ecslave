@@ -11,13 +11,9 @@ void ec_cmd_lrw(ecat_slave * ecs,uint8_t *dgram_ec)
 	uint16_t datalen = __ec_dgram_dlength(dgram_ec);
 	uint8_t *data	 = __ec_dgram_data(dgram_ec);
 	uint32_t offset  = __ec_dgram_laddr(dgram_ec);
-	uint8_t temp[datalen];
 
-	normalize_sizes(ecs, &offset, &datalen);
-	if (!get_process_data(temp, offset, datalen)) {
-		if (!set_process_data(data + offset, offset, datalen) )
-			memcpy(data + offset, temp, datalen);
-	}
+	set_process_data(data, offset, datalen);
+
        // If LRW is used, output FMMUs increment the working counter by 2,
         // while input FMMUs increment it by 1.
 	__ec_inc_wkc__(dgram_ec);

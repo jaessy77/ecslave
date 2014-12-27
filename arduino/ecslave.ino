@@ -36,7 +36,7 @@ void setup()
 	}
 
 	init_sii(&ecs);
-
+	pinMode(13, OUTPUT);
 	if (init_process_data(&ecs) < 0) {
 		Serial.println("illegal pdo configuration\n");
 		return;
@@ -50,4 +50,30 @@ void loop()
 {
 	if (ecs.fsm)
 		ecat_rcv(&ecs);
+}
+
+/*
+ * process data  operations for Arduino UNO only
+ *  Each pin may be used for a dedicated  purpose.
+ * 
+*/
+extern "C" int set_process_data(uint8_t *data, uint16_t offset, uint16_t datalen)
+{
+	int pdoe_idx = 0;
+	uint32_t cmd ; 
+	int should_act = 0;
+
+	memcpy( (void *)&cmd, (void *)&data[CMD_PDO_IDX], 4);
+	
+	Serial.println(cmd);
+	Serial.println("  >>");
+	for (;pdoe_idx < NR_PDOS; pdoe_idx++) {
+		should_act = cmd & (1 << pdoe_idx);
+		if (!should_act) {
+			continue;
+		}
+		Serial.println(pdoe_idx);
+		digitalWrite(pdoe_idx, data[pdoe_idx]);
+	}
+	return 0;
 }

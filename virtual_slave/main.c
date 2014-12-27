@@ -17,14 +17,16 @@
 #endif
 
 // Application parameters
-#define FREQUENCY 100
+#define FREQUENCY 10
 // Optional features
 
 #define TIMESPEC2NS(T) ((uint64_t) (T).tv_sec * NSEC_PER_SEC + (T).tv_nsec)
 #define CLOCK_TO_USE CLOCK_REALTIME
 #define NSEC_PER_SEC (1000000000L)
 #define PERIOD_NS (NSEC_PER_SEC / FREQUENCY)
-#define TWO_SLAVES
+#define ARDUINO_HIGH	1
+#define ARDUINO_LOW	0
+
 /****************************************************************************/
 
 // EtherCAT
@@ -38,25 +40,20 @@ const struct timespec cycletime = {0, PERIOD_NS};
 /****************************************************************************/
 
 // process data
-static uint8_t *domain1_pd = NULL;
+static uint8_t *pd = NULL;
 
 #define AnaInSlavePos1 0, 0
-#define AnaInSlavePos2 0, 1
 
 #define LIBIX_VP 0x000001ee, 0x0000000e /* LIBIX_VP = VENDOR PRODUCT */
 
 // offsets for PDO entries
 
-static unsigned int off_ana_in[2]={-1};
-static unsigned int off_ana_out[2]={-1};
+static unsigned int cmd_off = -1;
+static unsigned int pin_off[21]={-1};
 
 const static ec_pdo_entry_reg_t domain1_regs[] = {
-    {AnaInSlavePos1,  LIBIX_VP, 0x1a00, 0x02, &off_ana_out[0]},
-    {AnaInSlavePos1,  LIBIX_VP, 0x1600, 0x02, &off_ana_in[0]},
-#ifdef TWO_SLAVES
-    {AnaInSlavePos2,  LIBIX_VP, 0x1a00, 0x02, &off_ana_out[1]},
-    {AnaInSlavePos2,  LIBIX_VP, 0x1600, 0x02, &off_ana_in[1]},
-#endif
+    {AnaInSlavePos1,  LIBIX_VP, 0x1600, 0x14, &cmd_off},
+    {AnaInSlavePos1,  LIBIX_VP, 0x1600, 0x12, &pin_off[0]},
     {}
 };
 
@@ -97,45 +94,29 @@ int config_slaves(void)
         fprintf(stderr, "Failed to get slave configuration.\n");
         return -1;
     }
-#ifdef TWO_SLAVES
-    if (!(sc2 = ecrt_master_slave_config(
-                    master, AnaInSlavePos2, LIBIX_VP))) {
-        fprintf(stderr, "Failed to get slave configuration.\n");
-        return -1;
-    }
-#endif
     printf("Configuring PDOs...\n");
     if (ecrt_slave_config_pdos(sc1, EC_END, slave_0_syncs)) {
         fprintf(stderr, "Failed to configure PDOs.\n");
         return -1;
     }
 
-#ifdef TWO_SLAVES
-    if (ecrt_slave_config_pdos(sc2, EC_END, slave_1_syncs)) {
-        fprintf(stderr, "Failed to configure PDOs.\n");
-        return -1;
-    }
-#endif
     if (ecrt_domain_reg_pdo_entry_list(domain1, domain1_regs)) {
         fprintf(stderr, "PDO entry registration failed!\n");
         return -1;
     }
 
     ecrt_slave_config_dc(sc1, 0x0700, PERIOD_NS, 4400000, 0, 0);
-#ifdef TWO_SLAVES
-    ecrt_slave_config_dc(sc2, 0x0700, PERIOD_NS, 4400000, 0, 0);
-#endif
     printf("Activating master...\n");
     if (ecrt_master_activate(master))
         return -1;
 
-    if (!(domain1_pd = ecrt_domain_data(domain1))) {
+    if (!(pd = ecrt_domain_data(domain1))) {
         return -1;
     }
 
-    printf("Offsets in=%d,%d out=%d,%d\n",
-	off_ana_in[0], off_ana_in[1],
-	off_ana_out[0], off_ana_out[1]);
+    printf("Offsets %d %d\n",
+	cmd_off, pin_off[0]);
+
     return 0;
 }
 
@@ -171,11 +152,12 @@ void check_master_state(void)
     master_state = ms;
 }
 
-int debug = 0;
+int toggle = 0;
 
 void cyclic_task(void)
 {
-    struct timespec wakeupTime, time;
+    int cmd = 0;
+    struct timespec wakeupTime;
 
     // get current time
     clock_gettime(CLOCK_TO_USE, &wakeupTime);
@@ -186,31 +168,17 @@ void cyclic_task(void)
 	// receive process data
 	ecrt_master_receive(master);
 	ecrt_domain_process(domain1);
-
 	// check process data state (optional)
 	check_domain1_state();
-
-	// write application time to master
-	clock_gettime(CLOCK_TO_USE, &time);
-	if (counter) {
-		counter--;
-	} else { // do this at 1 Hz
-		counter = FREQUENCY;
-		// check for master state (optional)
-		check_master_state();
-		printf("time=%u\n",
-			(uint32_t)TIMESPEC2NS(time));
-		if (debug++ ==  15)
-			exit(0);
+	cmd = 1 << 13;
+	memcpy(&pd[cmd_off], &cmd, 4);
+	if ( toggle ){
+		toggle = 0;
+		pd[pin_off[0]] = ARDUINO_HIGH;
+	} else{
+		toggle = 1;
+		pd[pin_off[0]] = ARDUINO_LOW;
 	}
-	ecrt_master_application_time(master, TIMESPEC2NS(time));
-	/* master writes to 910  */
-	ecrt_master_sync_reference_clock(master);
-	/* 
-	 *	the reference slave propagarte its time to all other slaves. 
-	 *	note that this is actually the master time.
-	*/
-	ecrt_master_sync_slave_clocks(master);
 	// send process data
 	ecrt_domain_queue(domain1);
 	ecrt_master_send(master);
