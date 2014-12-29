@@ -37,6 +37,10 @@ void setup()
 
 	init_sii(&ecs);
 	pinMode(13, OUTPUT);
+	pinMode(12, OUTPUT);
+	pinMode(11, OUTPUT);
+	pinMode(10, OUTPUT);
+	pinMode(9, OUTPUT);
 	if (init_process_data(&ecs) < 0) {
 		Serial.println("illegal pdo configuration\n");
 		return;
@@ -64,15 +68,17 @@ extern "C" int set_process_data(uint8_t *data, uint16_t offset, uint16_t datalen
 	int should_act = 0;
 
 	memcpy( (void *)&cmd, (void *)&data[CMD_PDO_IDX], 4);
-	
-	Serial.println(cmd);
-	Serial.println("  >>");
+
 	for (;pdoe_idx < NR_PDOS; pdoe_idx++) {
 		should_act = cmd & (1 << pdoe_idx);
 		if (!should_act) {
 			continue;
 		}
-		Serial.println(pdoe_idx);
+		Serial.print("<");
+		Serial.print(data[pdoe_idx]);
+		Serial.print(":");
+		Serial.print(pdoe_idx);
+		Serial.println(">");
 		digitalWrite(pdoe_idx, data[pdoe_idx]);
 	}
 	return 0;

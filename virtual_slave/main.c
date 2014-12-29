@@ -26,6 +26,7 @@
 #define PERIOD_NS (NSEC_PER_SEC / FREQUENCY)
 #define ARDUINO_HIGH	1
 #define ARDUINO_LOW	0
+#define ARDUINO_PIN		9
 
 /****************************************************************************/
 
@@ -52,8 +53,8 @@ static unsigned int cmd_off = -1;
 static unsigned int pin_off[21]={-1};
 
 const static ec_pdo_entry_reg_t domain1_regs[] = {
-    {AnaInSlavePos1,  LIBIX_VP, 0x1600, 0x14, &cmd_off},
-    {AnaInSlavePos1,  LIBIX_VP, 0x1600, 0x12, &pin_off[0]},
+    {AnaInSlavePos1,  LIBIX_VP, 0x1a00, 0x14, &cmd_off},
+    {AnaInSlavePos1,  LIBIX_VP, 0x1a00, ARDUINO_PIN, &pin_off[0]},
     {}
 };
 
@@ -170,7 +171,7 @@ void cyclic_task(void)
 	ecrt_domain_process(domain1);
 	// check process data state (optional)
 	check_domain1_state();
-	cmd = 1 << 13;
+	cmd = 1 << ARDUINO_PIN;
 	memcpy(&pd[cmd_off], &cmd, 4);
 	if ( toggle ){
 		toggle = 0;
