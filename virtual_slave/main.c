@@ -26,7 +26,7 @@
 #define PERIOD_NS (NSEC_PER_SEC / FREQUENCY)
 #define ARDUINO_HIGH	1
 #define ARDUINO_LOW	0
-#define ARDUINO_PIN		9
+#define ARDUINO_PIN 	7 // digial pins that work:  7 , 6 ,3, 2 ,8,9
 
 /****************************************************************************/
 
@@ -190,6 +190,7 @@ void cyclic_task(void)
 
 int main(int argc, char **argv)
 {
+    printf("Using pin %d\n",ARDUINO_PIN);
     if (config_slaves())
 	return -1;
     cyclic_task();
