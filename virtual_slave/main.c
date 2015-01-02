@@ -26,7 +26,8 @@
 #define PERIOD_NS (NSEC_PER_SEC / FREQUENCY)
 #define ARDUINO_HIGH	1
 #define ARDUINO_LOW	0
-#define ARDUINO_PIN 	7 // digial pins that work:  7 , 6 ,3, 2 ,8,9
+//#define ARDUINO_PIN 	7 , 6 ,3, 2 ,8,9
+#define ARDUINO_PIN 	9
 
 /****************************************************************************/
 
