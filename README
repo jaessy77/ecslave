@@ -1,4 +1,18 @@
+ToDo-List
 
+* move original code in a sub folder
+* create new folder structure
+* create Sloeber project and check in
+* fiddle out necessary files for each subproject
+* create header files
+* create commons.h vor similar to hold special values in one space
+* fix autoconf files (seems to be broken)
+* ...
+
+Lot of stuff to be done next time .. but hey .. the starter-kits and shields are ordered .. need to Start very soon ;-)
+
+
+Original Readme:
 	Light Ethercat Slave
 
 ecslave comes in three flavors:
