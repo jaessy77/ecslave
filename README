@@ -1,4 +1,11 @@
-This is a fork from https://sourceforge.net/p/ecslave, restructured for my personal usage. Goal is to native compile in a Raspberry RT-Linux with EtherLab installed. The Arduino Slave is to be compiled with Sloeber IDE on either Win10 vor Linux itself.    Knowing that there aree powerful EtherCat ASICs around which all could do the stuff very fast, the intention is to have a quick and dirty solution for my personal needs and for my students to learn something around EtherCat itself.  KMany thanks to the very clever guy founded this project.
+This is a fork from https://sourceforge.net/p/ecslave, restructured for my personal usage.
+
+Goal is to native compile the Virtual Slave in a Raspberry RT-Linux with EtherLab installed.
+The Arduino Slave is to be compiled with Sloeber IDE on either Win10 vor Linux itself.
+
+Knowing that there are powerful EtherCat ASICs around which all could do the stuff very fast,
+the intention is to have a quick and dirty solution for my personal needs and for my students
+to learn something around EtherCat itself.  KMany thanks to the very clever guy founded this project.
 
 ToDo-List
 
