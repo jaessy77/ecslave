@@ -1,0 +1,2 @@
+This is an example of a code to use in etherlab.
+gcc main.c -lethercat -lrt -pthread
