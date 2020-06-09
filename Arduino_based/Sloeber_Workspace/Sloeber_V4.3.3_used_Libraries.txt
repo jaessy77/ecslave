@@ -1,0 +1,11 @@
+Used Libraries via Libray Manager:
+
+Arduino Uno with W5100 shield
+* Ethernet (Default) V2.0.0
+	for W5100 integration
+	#include <Ethernet.h>
+
+Arduino Nano with suitable ENC28J60 shield
+* UIPEthernet (Default) V2.0.8
+	for ENC28J60 Arduino Nano Shield integration
+	#include <UIPEthernet.h>
